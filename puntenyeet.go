@@ -1,51 +1,48 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"github.com/go-rod/rod"
 )
 
 type points struct {
-	vak string
+	vak       string
 	onderwerp string
-	points string
+	points    string
 	pointsmax string
 }
 
-func readPoints(page *rod.Page) []points{
-	var puntenlijst []points
-
-	//loop parameters
-	end := false
-	i := 1
-
-	course := fmt.Sprintf("#\\31 7_2530 > tbody > tr:nth-child(%d) > td.courseNameRecent", i)
-	subject := fmt.Sprintf("#\\31 7_2530 > tbody > tr:nth-child(%d) > td.title", i)
-	punten := fmt.Sprintf("#\\31 7_2530 > tbody > tr:nth-child(%d) > td.point", i)
-	puntenmax := fmt.Sprintf("#\\31 7_2530 > tbody > tr:nth-child(%d) > td.max", i)
-
-	for !end{
-
+func handleError(err error) {
+	var evalErr *rod.ErrEval
+	if errors.Is(err, context.DeadlineExceeded) { // timeout error
+		fmt.Println("timeout err")
+	} else if errors.As(err, &evalErr) { // eval error
+		fmt.Println(evalErr.LineNumber)
+	} else if err != nil {
+		fmt.Println("can't handle", err)
 	}
-
-
-	//vak := page.MustElement("#\\31 7_2530 > tbody > tr:nth-child(5) > td.courseNameRecent").MustText()
-	//toets := page.MustElement("#\\31 7_2530 > tbody > tr:nth-child(5) > td.title").MustText()
-	//punten := page.MustElement("#\\31 7_2530 > tbody > tr:nth-child(5) > td.point").MustText()
-	//puntenmax := page.MustElement("#\\31 7_2530 > tbody > tr:nth-child(5) > td.max").MustText()
-	return puntenlijst
 }
 
-/* compare title
-#\31 7_2530 > tbody > tr:nth-child(1) > td.courseNameRecent
-#\31 7_2530 > tbody > tr:nth-child(5) > td.courseNameRecent
-#\31 7_2530 > tbody > tr:nth-child(6) > td.courseNameRecent
+func readPoints(page *rod.Page) []points {
+	//array to return
+	var puntenlijst []points
+	//page.MustElement("#OptionTable > tbody > tr > td.countInput > input").MustSelectAllText().MustInput("").MustInput("50")
 
-compare points
-#\31 7_2530 > tbody > tr:nth-child(12) > td.point  //genoeg
-#\31 7_2530 > tbody > tr:nth-child(13) > td.point.tekort  //tekort
+	for i := 1; i < 20; i++ {
+		//search for the names and add them to the struct
+		course := page.MustElement(fmt.Sprintf("#\\31 7_2530 > tbody > tr:nth-child(%d) > td.courseNameRecent", i)).MustText()
+		subject := page.MustElement(fmt.Sprintf("#\\31 7_2530 > tbody > tr:nth-child(%d) > td.title", i)).MustText()
+		punten := page.MustElement(fmt.Sprintf("#\\31 7_2530 > tbody > tr:nth-child(%d) > td.point", i)).MustText()
+		puntenmax := page.MustElement(fmt.Sprintf("#\\31 7_2530 > tbody > tr:nth-child(%d) > td.max", i)).MustText()
 
-document.querySelector("#\\31 7_2530 > tbody > tr:nth-child(12) > td.point")
-document.querySelector("#\\31 7_2530 > tbody > tr:nth-child(13) > td.point.tekort")
-
- */
+		puntenlijst = append(puntenlijst, points{
+			vak:       course,
+			onderwerp: subject,
+			points:    punten,
+			pointsmax: puntenmax,
+		})
+	}
+	return puntenlijst
+}
