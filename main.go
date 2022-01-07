@@ -1,29 +1,31 @@
 package main
 
 import (
-	"fmt"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/input"
+	"log"
 	"time"
 )
 
 //this logs in to the site and goes tot the recent points
-func login(page *rod.Page) {
+func login() *rod.Page {
+	browser := rod.New().MustConnect()
+	page := browser.MustPage("https://online.myro.be/login.php")
 	page.MustElement("#School").MustInput("tsaam").MustPress(input.Enter)
-	page.MustElement("#SmsRefB").MustClick()
-	page.MustElement("#login_form__username").MustWaitLoad().MustInput("seppe.degryse@student.tsaam.be")
-	page.MustElement("#login_form__password").MustInput("Sepieboy.123")
-	page.MustElement("#smscMain > div > div > div.oauth__form > form > button").MustClick()
-	page.MustElement("body > table > tbody > tr > td:nth-child(1) > table > tbody > tr > td > span:nth-child(1) > a").MustClick()              //clicks on logbook
-	page.MustElement("body > table > tbody > tr > td:nth-child(1) > table:nth-child(4) > tbody > tr > td > span:nth-child(2) > a").MustClick() //clicks on recent
+	_ = page.MustElement("#Username").Input("seppe.degryse@telenet.be")
+	_ = page.MustElement("td:nth-child(2) > input[type=password]").Input("Sepieboy.268")
+	page.MustElement("div:nth-child(3) > input[type=submit]").MustClick()
+	page.MustElement("body > table > tbody > tr > td:nth-child(1) > table:nth-child(4) > tbody > tr > td > span:nth-child(2) > a").MustClick()
+	log.Println("Logged in")
+	return page
 }
 
 func main() {
-	browser := rod.New().MustConnect()
-	page := browser.MustPage("https://online.myro.be/login.php")
-	login(page)
+	log.Println("start")
+	page := login()
 	f := readPoints(page)
-	fmt.Println(f)
+	CreateVakken(f)
+	seperate(f)
 
 	time.Sleep(time.Hour)
 }
