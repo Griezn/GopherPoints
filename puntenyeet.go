@@ -2,22 +2,25 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"log"
+
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/input"
-	"log"
 )
 
 type points struct {
-	vak  string
-	test toets
+	Vak  string `json:"vak"`
+	Test toets  `json:"toets"`
 }
 
 type toets struct {
-	onderwerp string
-	points    string
-	pointsmax string
+	Onderwerp string `json:"onderwerp"`
+	Points    string `json:"points"`
+	Pointsmax string `json:"pointsmax"`
 }
 
 func handleError(err error) {
@@ -45,15 +48,25 @@ func readPoints(page *rod.Page) []points {
 		puntenmax := page.MustElement(fmt.Sprintf("#\\31 7_2530 > tbody > tr:nth-child(%d) > td.max", i)).MustText()
 
 		puntenlijst = append(puntenlijst, points{
-			vak: course,
-			test: toets{
-				onderwerp: subject,
-				points:    punten,
-				pointsmax: puntenmax,
+			Vak: course,
+			Test: toets{
+				Onderwerp: subject,
+				Points:    punten,
+				Pointsmax: puntenmax,
 			},
 		})
 	}
 	log.Println("End search")
+
+	data, err := json.MarshalIndent(puntenlijst, "", " ")
+	if err != nil {
+		log.Println(err)
+	}
+	err2 := ioutil.WriteFile("yeet.json", data, 0644)
+	if err2 != nil {
+		log.Println(err2)
+	}
+
 	return puntenlijst
 }
 
@@ -72,7 +85,7 @@ func removeDuplicateStr(strSlice []string) []string {
 func CreateVakken(points []points) {
 	var vakken []string
 	for i, point := range points {
-		vakken = append(vakken, point.vak)
+		vakken = append(vakken, point.Vak)
 		i++
 	}
 	vakken = removeDuplicateStr(vakken)
@@ -94,56 +107,65 @@ func seperate(points []points) {
 	var restjes []toets
 
 	for i, point := range points {
-		switch point.vak {
+		switch point.Vak {
 		case "Engels":
-			Engels = append(Engels, point.test)
+			Engels = append(Engels, point.Test)
 			i++
 			continue
 		case "Aardrijkskunde":
-			Aardrijkskunde = append(Aardrijkskunde, point.test)
+			Aardrijkskunde = append(Aardrijkskunde, point.Test)
 			i++
 			continue
 		case "Fysica":
-			Fysica = append(Fysica, point.test)
+			Fysica = append(Fysica, point.Test)
 			i++
 			continue
 		case "Frans":
-			Frans = append(Frans, point.test)
+			Frans = append(Frans, point.Test)
 			i++
 			continue
 		case "Duits":
-			Duits = append(Duits, point.test)
+			Duits = append(Duits, point.Test)
 			i++
 			continue
 		case "Nederlands":
-			Nederlands = append(Nederlands, point.test)
+			Nederlands = append(Nederlands, point.Test)
 			i++
 			continue
 		case "Biologie":
-			Biologie = append(Biologie, point.test)
+			Biologie = append(Biologie, point.Test)
 			i++
 			continue
 		case "Chemie":
-			Chemie = append(Chemie, point.test)
+			Chemie = append(Chemie, point.Test)
 			i++
 			continue
 		case "Esthetica":
-			Esthetica = append(Esthetica, point.test)
+			Esthetica = append(Esthetica, point.Test)
 			i++
 			continue
 		case "Godsdienst":
-			Godsdienst = append(Godsdienst, point.test)
+			Godsdienst = append(Godsdienst, point.Test)
 			i++
 			continue
 		case "Wiskunde":
-			Wiskunde = append(Wiskunde, point.test)
+			Wiskunde = append(Wiskunde, point.Test)
 			i++
 			continue
 		default:
-			restjes = append(restjes, point.test)
+			restjes = append(restjes, point.Test)
 			i++
 			continue
 		}
 	}
-	fmt.Println(Wiskunde)
+	//fmt.Println(Wiskunde)
+
+	data, err := json.Marshal(Wiskunde)
+	if err != nil {
+		log.Println(err)
+	}
+	err2 := ioutil.WriteFile("test.json", data, 0644)
+	if err2 != nil {
+		log.Println(err2)
+	}
 }
