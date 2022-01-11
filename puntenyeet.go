@@ -159,13 +159,4 @@ func seperate(points []points) {
 		}
 	}
 	//fmt.Println(Wiskunde)
-
-	data, err := json.Marshal(Wiskunde)
-	if err != nil {
-		log.Println(err)
-	}
-	err2 := ioutil.WriteFile("test.json", data, 0644)
-	if err2 != nil {
-		log.Println(err2)
-	}
 }
