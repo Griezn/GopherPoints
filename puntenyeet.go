@@ -23,6 +23,19 @@ type toets struct {
 	Pointsmax string `json:"pointsmax"`
 }
 
+//this logs in to the site and goes tot the recent points
+func login() *rod.Page {
+	browser := rod.New().MustConnect()
+	page := browser.MustPage("https://online.myro.be/login.php")
+	page.MustElement("#School").MustInput("tsaam").MustPress(input.Enter)
+	_ = page.MustElement("#Username").Input("seppe.degryse@telenet.be")
+	_ = page.MustElement("td:nth-child(2) > input[type=password]").Input("Sepieboy.268")
+	page.MustElement("div:nth-child(3) > input[type=submit]").MustClick()
+	page.MustElement("body > table > tbody > tr > td:nth-child(1) > table:nth-child(4) > tbody > tr > td > span:nth-child(2) > a").MustClick()
+	log.Println("Logged in")
+	return page
+}
+
 func handleError(err error) {
 	var evalErr *rod.ErrEval
 	if errors.Is(err, context.DeadlineExceeded) { // timeout error
@@ -58,7 +71,16 @@ func readPoints(page *rod.Page) []points {
 	}
 	log.Println("End search")
 
-	data, err := json.MarshalIndent(puntenlijst, "", " ")
+	//Save the points as a JSON file
+
+	return puntenlijst
+}
+
+func SaveJSON() {
+	page := login()
+	lijst := readPoints(page)
+
+	data, err := json.MarshalIndent(lijst, "", " ")
 	if err != nil {
 		log.Println(err)
 	}
@@ -66,8 +88,6 @@ func readPoints(page *rod.Page) []points {
 	if err2 != nil {
 		log.Println(err2)
 	}
-
-	return puntenlijst
 }
 
 func removeDuplicateStr(strSlice []string) []string {
@@ -89,7 +109,6 @@ func CreateVakken(points []points) {
 		i++
 	}
 	vakken = removeDuplicateStr(vakken)
-	fmt.Println(vakken)
 }
 
 func seperate(points []points) {
@@ -159,4 +178,10 @@ func seperate(points []points) {
 		}
 	}
 	//fmt.Println(Wiskunde)
+}
+
+func GetLatest() points {
+	page := login()
+	lijst := readPoints(page)
+	return lijst[0]
 }
