@@ -5,7 +5,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-const auth_key = "Njg1ODQyMDE3MTcwNzUxNTEw.XmOiJw.a-DghWGQ33ZcAmW_BJebATQW0To"
+const auth_key = "token"
 
 var (
 	BotID string
