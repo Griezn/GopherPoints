@@ -1,13 +1,23 @@
-# Gyro
-Gyro is een discord bot die de punten vanuit myro kan uitlezen. Hierdoor krijgen meerdere opties van hoe de punten worden overgebracht naar de gebruiker: zoals een notificatie op een aangewezen moment van de dag, of om overzichten per vak te krijgen.
 
-### TODO
-- Optimize discord bot
-- Add overzicht per vak
-- Transfer from JSON to a Database
+![Logo](GopherPoints.png)
 
-### Why Go?
-Omdat Go vo de beirn is!!!
 
+# GopherPoints
+
+GopherPoints is a tool written in Go to have a better overview of your points. It uses a webscraper to read the points from myro and then transfers the info to the user via Discord.
+
+### Why Go
+Go or Golang is a really powerfull language whith great posibilities. And I thought this was a good project to show what it is capable of.
+## Features
+
+- Push notifications
+- Summary per course
+- Class average
+
+
+## ToDo
+- Add summary per course
+- Transfer to SQL database
 ## Authors
+
 - [@Griezn](https://github.com/Griezn)
