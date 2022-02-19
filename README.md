@@ -1,5 +1,5 @@
 
-![Logo](GopherPoints.png)
+![Logo](https://github.com/Griezn/Gyro/blob/master/Gopherpoints.png)
 
 
 # GopherPoints
